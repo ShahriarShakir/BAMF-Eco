@@ -1,0 +1,77 @@
+# Baseline Comparison Configuration
+# ------------------------------------
+# Same search space, different optimizer strategies
+# Run each baseline with identical budget for fair comparison
+
+experiment_name: "baseline_comparison"
+seed: 42
+
+# === Baselines to Compare ===
+baselines:
+  - name: "random_search"
+    type: "random"
+    max_evaluations: 200
+
+  - name: "hyperband"
+    type: "hyperband"
+    eta: 3
+    min_fidelity: 5
+    max_fidelity: 100
+    max_evaluations: 200
+
+  - name: "bohb"
+    type: "bohb"
+    eta: 3
+    min_fidelity: 5
+    max_fidelity: 100
+    num_samples: 64
+    max_evaluations: 200
+
+  - name: "dehb"
+    type: "dehb"
+    eta: 3
+    min_fidelity: 5
+    max_fidelity: 100
+    max_evaluations: 200
+
+  - name: "ehvi"
+    type: "ehvi"
+    max_evaluations: 200
+    reference_point:
+      mAP: 0.0
+      energy_kwh: 0.1
+      latency_ms: 500.0
+
+  - name: "single_obj_accuracy"
+    type: "single_objective"
+    objective: "mAP"
+    direction: "maximize"
+    max_evaluations: 200
+
+  - name: "single_obj_efficiency"
+    type: "single_objective"
+    objective: "energy_kwh"
+    direction: "minimize"
+    max_evaluations: 200
+
+  - name: "bamf_eco"
+    type: "bamf_eco"
+    config_file: "bamf_eco_optimizer.yaml"
+    max_evaluations: 200
+
+# Each baseline runs with same budget
+total_budget_ksu: 10.0
+num_seeds: 5   # 5 random seeds for statistical significance
+seeds: [42, 123, 456, 789, 1024]
+
+# Use same search space as BAMF-Eco optimizer config
+search_space_config: "bamf_eco_optimizer.yaml"
+
+# Dataset
+dataset: "coco"
+dataset_path: "/path/to/bamf-eco/datasets/coco_person/coco_person.yaml"
+target_classes: [0]
+
+# Sustainability
+grid_carbon_factor: 0.79
+water_factor: 3.5

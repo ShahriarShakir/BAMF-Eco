@@ -1,0 +1,38 @@
+# EcoDetBench Quick Sweep — Small Models Only
+# -----------------------------------------------
+# Nano/Small variants only, good for initial results
+# Estimated: ~2 hours on single V100
+
+experiment_name: "ecodetbench_small"
+seed: 42
+
+model_families:
+  - "yolov8"
+  - "yolov9"
+  - "yolov10"
+  - "yolo11"
+  - "yolo26"
+  - "rtdetr"
+
+model_sizes: ["n", "s", "t"]  # Small variants only
+
+precisions: ["fp32", "fp16"]
+image_sizes: [320, 640]
+
+warmup_iters: 50
+benchmark_iters: 200
+num_repeats: 3
+
+dataset: "coco"
+dataset_path: "/path/to/bamf-eco/datasets/coco_person/coco_person.yaml"
+target_classes: [0]
+
+grid_carbon_factor: 0.79
+grid_carbon_factor_min: 0.60
+grid_carbon_factor_max: 1.00
+water_factor: 3.5
+water_factor_min: 1.8
+water_factor_max: 5.0
+
+hardware_name: "v100"
+gpu_name: ""

@@ -1,0 +1,61 @@
+# Ablation Study Configuration
+# --------------------------------
+# Ablation variants to validate each BAMF-Eco component
+
+experiment_name: "ablation_study"
+seed: 42
+
+# === Ablation Variants ===
+ablations:
+  # Full BAMF-Eco (reference)
+  - name: "bamf_eco_full"
+    description: "Complete BAMF-Eco system"
+    disable: []
+
+  # Without eco-feasibility constraint
+  - name: "no_eco_constraint"
+    description: "BAMF-Eco without eco-feasibility GP constraint"
+    disable: ["eco_constraint"]
+
+  # Without multi-fidelity correction
+  - name: "no_fidelity_correction"
+    description: "BAMF-Eco without fidelity correction model"
+    disable: ["fidelity_correction"]
+
+  # Without early termination
+  - name: "no_early_termination"
+    description: "BAMF-Eco without Pareto early termination"
+    disable: ["early_termination"]
+
+  # Without multi-fidelity (full fidelity only)
+  - name: "full_fidelity_only"
+    description: "BAMF-Eco with only max-fidelity evaluations"
+    disable: ["multi_fidelity"]
+
+  # Without sustainability objectives
+  - name: "no_sustainability"
+    description: "Only accuracy + latency objectives (no CO₂e, no water)"
+    disable: ["sustainability_objective"]
+
+  # Single-objective variant (accuracy only)
+  - name: "accuracy_only"
+    description: "Single-objective BO for accuracy only"
+    disable: ["multi_objective"]
+
+# All ablations use same budget
+total_budget_ksu: 10.0
+max_evaluations: 200
+num_seeds: 5
+seeds: [42, 123, 456, 789, 1024]
+
+# Search space
+search_space_config: "bamf_eco_optimizer.yaml"
+
+# Dataset
+dataset: "coco"
+dataset_path: "/path/to/bamf-eco/datasets/coco_person/coco_person.yaml"
+target_classes: [0]
+
+# Sustainability
+grid_carbon_factor: 0.79
+water_factor: 3.5

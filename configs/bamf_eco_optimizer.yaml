@@ -1,0 +1,158 @@
+# BAMF-Eco Optimizer Configuration
+# -----------------------------------
+# Search-space and BAMF-Eco optimizer hyperparameters
+# Used for the multi-objective optimization experiments
+
+experiment_name: "bamf_eco_optimizer"
+seed: 42
+
+# === Search Space ===
+search_space:
+  # 1. Model selection (discrete)
+  model_name:
+    type: "categorical"
+    choices:
+      - "yolov8n"
+      - "yolov8s"
+      - "yolov8m"
+      - "yolov8l"
+      - "yolov9t"
+      - "yolov9s"
+      - "yolov9m"
+      - "yolov9c"
+      - "yolov9e"
+      - "yolov10n"
+      - "yolov10s"
+      - "yolov10m"
+      - "yolov10l"
+      - "yolo11n"
+      - "yolo11s"
+      - "yolo11m"
+      - "yolo11l"
+      - "yolo26n"
+      - "yolo26s"
+      - "yolo26m"
+      - "yolo26l"
+      - "rtdetr-l"
+      - "rtdetr-x"
+
+  # 2. Image size
+  image_size:
+    type: "ordinal"
+    choices: [320, 416, 512, 640]
+
+  # 3. Precision
+  precision:
+    type: "categorical"
+    choices: ["fp32", "fp16"]
+
+  # 4. Training epochs (for multi-fidelity: this IS the fidelity dimension)
+  epochs:
+    type: "ordinal"
+    choices: [5, 10, 20, 50, 100]
+    is_fidelity: true
+
+  # 5. Learning rate
+  lr0:
+    type: "continuous"
+    lower: 0.0001
+    upper: 0.1
+    log_scale: true
+
+  # 6. Batch size
+  batch_size:
+    type: "ordinal"
+    choices: [8, 16, 32]
+
+  # 7. Optimizer
+  optimizer:
+    type: "categorical"
+    choices: ["SGD", "AdamW"]
+
+  # 8. Momentum (conditional on SGD)
+  momentum:
+    type: "continuous"
+    lower: 0.8
+    upper: 0.99
+    condition: {optimizer: "SGD"}
+
+  # 9. Weight decay
+  weight_decay:
+    type: "continuous"
+    lower: 0.0001
+    upper: 0.01
+    log_scale: true
+
+  # 10. Data augmentation strength
+  augment_strength:
+    type: "continuous"
+    lower: 0.0
+    upper: 1.0
+
+# === BAMF-Eco Optimizer Settings ===
+optimizer_settings:
+  # Budget
+  total_budget_ksu: 10.0       # KSU budget for full experiment
+  max_evaluations: 200
+  
+  # Multi-fidelity
+  fidelity_dim: "epochs"
+  min_fidelity: 5
+  max_fidelity: 100
+  eta: 3                       # SH promotion factor
+  
+  # Gaussian Process
+  gp_kernel: "matern52"
+  gp_noise_prior: 0.01
+  gp_normalize_y: true
+  
+  # Acquisition function
+  acquisition: "eco_ehvi"      # Eco-aware Expected HyperVolume Improvement
+  reference_point:             # Anti-utopia for hypervolume
+    mAP: 0.0
+    energy_kwh: 0.1
+    latency_ms: 500.0
+    co2e_kg: 1.0
+  
+  # Feasibility
+  eco_constraints:
+    max_energy_kwh: 0.05       # Per-evaluation energy budget
+    max_co2e_kg: 0.5           # Per-evaluation CO₂e budget
+    max_latency_ms: 100.0      # Real-time requirement
+  
+  # Early termination
+  early_termination:
+    enable: true
+    patience: 10               # Evaluations without Pareto improvement
+    min_evaluations: 30        # Minimum before allowing termination
+  
+  # Fidelity correction
+  correction_model: "gp"       # GP or linear
+  correction_start_after: 15   # Number of full-fidelity evals before fitting
+
+# === Objectives ===
+objectives:
+  - name: "mAP"
+    direction: "maximize"
+    weight: 1.0
+  - name: "energy_kwh"
+    direction: "minimize"
+    weight: 1.0
+  - name: "latency_ms"
+    direction: "minimize"
+    weight: 0.5
+  - name: "co2e_kg"
+    direction: "minimize"
+    weight: 0.5
+
+# === Dataset ===
+dataset: "coco"
+dataset_path: "/path/to/bamf-eco/datasets/coco_person/coco_person.yaml"
+target_classes: [0]
+
+# === Sustainability ===
+grid_carbon_factor: 0.79
+water_factor: 3.5
+
+# === Hardware ===
+hardware_name: "v100"

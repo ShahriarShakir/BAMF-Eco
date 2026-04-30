@@ -1,0 +1,40 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.idea/
+.vscode/
+.DS_Store
+*.swp
+
+# Model weights and checkpoints
+*.pt
+*.pth
+*.ckpt
+*.onnx
+checkpoints/
+
+# Outputs and logs
+outputs/
+runs/
+wandb/
+mlruns/
+*.log
+
+# Datasets and large media
+data/
+datasets/
+raw_data/
+processed_data/
+*.jpg
+*.jpeg
+*.png
+*.mp4
+*.avi
+*.npy
+*.npz
+
+# Misc
+.coverage
+.pytest_cache/

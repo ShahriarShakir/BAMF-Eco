@@ -1,0 +1,37 @@
+# Smoke Test Configuration
+# --------------------------
+# Quick validation on login node (CPU, minimal iterations)
+# Purpose: Verify pipeline works before submitting GPU jobs
+
+experiment_name: "smoke_test"
+seed: 42
+
+# Minimal model set
+model_families: ["yolov8"]
+model_sizes: ["n"]
+
+# Single precision/size
+precisions: ["fp32"]
+image_sizes: [320]
+
+# Minimal iterations
+warmup_iters: 3
+benchmark_iters: 5
+num_repeats: 1
+
+# Dataset
+dataset: "coco"
+dataset_path: "/path/to/bamf-eco/datasets/coco_person/coco_person.yaml"
+target_classes: [0]  # person
+
+# Sustainability params (regional avg)
+grid_carbon_factor: 0.79
+grid_carbon_factor_min: 0.60
+grid_carbon_factor_max: 1.00
+water_factor: 3.5
+water_factor_min: 1.8
+water_factor_max: 5.0
+
+# Hardware
+hardware_name: "login_node_cpu"
+gpu_name: ""

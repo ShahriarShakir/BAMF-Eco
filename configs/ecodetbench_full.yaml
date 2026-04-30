@@ -1,0 +1,48 @@
+# EcoDetBench Full Benchmark Configuration
+# -------------------------------------------
+# Full 24-model × 2-precision × 4-imgsz sweep
+# Requires GPU node (V100 or A100) on HPC cluster
+# Estimated: ~8-12 hours on single V100
+
+experiment_name: "ecodetbench_full"
+seed: 42
+
+# All model families
+model_families:
+  - "yolov8"
+  - "yolov9"
+  - "yolov10"
+  - "yolo11"
+  - "yolo26"
+  - "rtdetr"
+
+# All sizes
+model_sizes: ["n", "s", "m", "l", "t", "c", "e", "x"]
+
+# Both precisions  
+precisions: ["fp32", "fp16"]
+
+# Four image sizes spanning the range
+image_sizes: [320, 416, 512, 640]
+
+# Benchmark iterations (200 = reliable statistics)
+warmup_iters: 50
+benchmark_iters: 200
+num_repeats: 3
+
+# COCO dataset
+dataset: "coco"
+dataset_path: "/path/to/bamf-eco/datasets/coco_person/coco_person.yaml"
+target_classes: [0]  # person
+
+# HPC sustainability (regional factors)
+grid_carbon_factor: 0.79
+grid_carbon_factor_min: 0.60
+grid_carbon_factor_max: 1.00
+water_factor: 3.5
+water_factor_min: 1.8
+water_factor_max: 5.0
+
+# Hardware
+hardware_name: "v100"
+gpu_name: ""  # Auto-detected at runtime
